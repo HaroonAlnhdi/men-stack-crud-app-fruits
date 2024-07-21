@@ -2,16 +2,19 @@
         
     // Const :
 
-        const dotenv = require("dotenv"); // require package
+        const dotenv = require("dotenv");                    // require package
         dotenv.config(); // Loads the environment variables from .env file
         const express = require("express");
-        const mongoose = require("mongoose"); // require package
+        const mongoose = require("mongoose");               // require package
+        const methodOverride = require("method-override");  // require package
+        const morgan = require("morgan");                   // require package
         const Fruit = require("./models/fruit.js");
 
 
     // 
         const app = express();
         app.use(express.urlencoded({ extended: false }));
+
     // Database :
         mongoose.connect(process.env.MONGODB_URI);
         // log connection status to terminal on start
@@ -19,11 +22,14 @@
         console.log(`Connected to MongoDB ${mongoose.connection.name}.`);
         });
 
+    // Mount it along with our other middleware, ABOVE the routes
+        app.use(express.urlencoded({ extended: false }));
+        app.use(methodOverride("_method")); // new
+        app.use(morgan("dev")); //new
+
 
     // ROUTES :
 
-
-    // Landing page : الصفحات 
 
         app.get("/", async (req, res) => {
             res.render("index.ejs");
@@ -35,6 +41,7 @@
             res.render("fruits/index.ejs", { fruits: allFruits });
           });
 
+          
         app.get("/fruits/new",(req,res) => {
             res.render("fruits/new.ejs");
         })
@@ -45,6 +52,14 @@
             res.render("fruits/show.ejs", { fruit: foundFruit });
         });
 
+        // page to delte the fruit 
+        app.delete("/fruits/:fruitId", async (req, res) => {
+            await Fruit.findByIdAndDelete(req.params.fruitId);
+            res.redirect("/fruits");
+          });
+
+
+     // Landing page : الصفحات 
 
         // POST /fruits - مهم جدا ارسال مدخلات من الصفحة الى قاعدة البيانات 
         app.post("/fruits", async (req, res) => {
