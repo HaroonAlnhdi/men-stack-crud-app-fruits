@@ -23,7 +23,7 @@
     // ROUTES :
 
 
-    // Landing page :
+    // Landing page : الصفحات 
 
         app.get("/", async (req, res) => {
             res.render("index.ejs");
@@ -39,7 +39,12 @@
             res.render("fruits/new.ejs");
         })
 
-      
+        // page to display fruit by id 
+        app.get("/fruits/:fruitId", async (req, res) => {
+            const foundFruit = await Fruit.findById(req.params.fruitId);
+            res.render("fruits/show.ejs", { fruit: foundFruit });
+        });
+
 
         // POST /fruits - مهم جدا ارسال مدخلات من الصفحة الى قاعدة البيانات 
         app.post("/fruits", async (req, res) => {
