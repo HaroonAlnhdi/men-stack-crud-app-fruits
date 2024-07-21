@@ -26,6 +26,10 @@
             res.render("index.ejs");
         });
 
+
+        app.get("/fruits/new",(req,res) => {
+            res.render("fruits/new.ejs");
+        })
     
 
         app.listen(3000, () => {
