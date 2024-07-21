@@ -3,6 +3,7 @@ const dotenv = require("dotenv"); // require package
 dotenv.config(); // Loads the environment variables from .env file
 const express = require("express");
 const mongoose = require("mongoose"); // require package
+const Fruit = require("./models/fruit.js");
 const app = express();
 
 
