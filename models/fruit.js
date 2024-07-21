@@ -1,17 +1,18 @@
-// models/fruit.js
+
 
 const mongoose = require("mongoose");
 
-// models/fruit.js
 
+//   Create the schema :
 
 const fruitSchema = new mongoose.Schema({
   name: String,
   isReadyToEat: Boolean,
 });
 
-const Fruit = mongoose.model("Fruit", fruitSchema); // create model
+// create model :
 
+const Fruit = mongoose.model("Fruit", fruitSchema); 
 // models/fruit.js
 
 module.exports = Fruit;
