@@ -1,6 +1,6 @@
 
         
-    // Const :
+    // import :
 
         const dotenv = require("dotenv");                    // require package
         dotenv.config(); // Loads the environment variables from .env file
@@ -9,7 +9,7 @@
         const methodOverride = require("method-override");  // require package
         const morgan = require("morgan");                   // require package
         const Fruit = require("./models/fruit.js");
-
+        const fruitsCtrl = require("./controllers/fruits"); // نجيب منة اختصارات الصفحة 
 
     // 
         const app = express();
@@ -30,73 +30,15 @@
 
     // ROUTES :
 
-
-        app.get("/", async (req, res) => {
-            res.render("index.ejs");
-        });
-
-        // GET /fruits -  مهم طباعة البيانات من قاعدة البيانات  على الصفحة 
-        app.get("/fruits", async (req, res) => {
-            const allFruits = await Fruit.find();
-            res.render("fruits/index.ejs", { fruits: allFruits });
-          });
-
-
-        app.get("/fruits/new",(req,res) => {
-            res.render("fruits/new.ejs");
-        })
-
-        // page to display fruit by id 
-        app.get("/fruits/:fruitId", async (req, res) => {
-            const foundFruit = await Fruit.findById(req.params.fruitId);
-            res.render("fruits/show.ejs", { fruit: foundFruit });
-        });
-
-        // page to delte the fruit 
-        app.delete("/fruits/:fruitId", async (req, res) => {
-            await Fruit.findByIdAndDelete(req.params.fruitId);
-            res.redirect("/fruits"); // دائما يبدا ب )(/) لازم
-          });
-
-          // GET localhost:3000/fruits/:fruitId/edit
-          app.get("/fruits/:fruitId/edit", async (req, res) => {
-            const foundFruit = await Fruit.findById(req.params.fruitId);
-            res.render("fruits/edit.ejs", {
-              fruit: foundFruit,
-            });
-          });
-
-     // Landing page : الصفحات 
-
-        // POST /fruits - مهم جدا ارسال مدخلات من الصفحة الى قاعدة البيانات 
-        app.post("/fruits", async (req, res) => {
-            if (req.body.isReadyToEat === "on") {
-              req.body.isReadyToEat = true;      //  change value from on to true in DataBase ;
-            } else {
-              req.body.isReadyToEat = false;    //  change value from off to false in DataBase ;
-            }
-            await Fruit.create(req.body);      // add these input from (form) to DB..
-            // res.redirect("/fruits/new");      // نستخدمة بعد ارسال البيانات عشان مايكرر العملية عدة مرات في قاعدة البيانات  -يضمن ان العملية تتنفذ مرة  بعد ضغط ارسال 
-            res.redirect("/fruits"); // redirect to index fruits
-          });
-
-
-         
-        // ياخذ المعلومات من صفحة التعديل ويضعها في قاعدة البيانات   
-        app.put("/fruits/:fruitId", async (req, res) => {
-            // Handle the 'isReadyToEat' checkbox data
-            if (req.body.isReadyToEat === "on") {
-            req.body.isReadyToEat = true;
-            } else {
-            req.body.isReadyToEat = false;
-            }
-            
-            // Update the fruit in the database
-            await Fruit.findByIdAndUpdate(req.params.fruitId, req.body);
-        
-            // Redirect to the fruit's show page to see the updates
-            res.redirect(`/fruits/${req.params.fruitId}`);
-        });
+    app.get('/', fruitsCtrl.home);
+    app.get('/fruits/new', fruitsCtrl.newFruit);
+    app.post('/fruits', fruitsCtrl.create);
+    app.get('/fruits', fruitsCtrl.index);
+    app.get('/fruits/:fruitId', fruitsCtrl.show);
+    app.delete('/fruits/:fruitId', fruitsCtrl.deletePage);
+    app.get('/fruits/:fruitId/edit', fruitsCtrl.edit);
+    app.put('/fruits/:fruitId', fruitsCtrl.update);
+       
 
         app.listen(3000, () => {
         console.log("Listening on port 3000");
